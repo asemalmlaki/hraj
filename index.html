@@ -58,6 +58,10 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .top-buttons { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; z-index: 10; }
+        html[dir="ltr"] .top-buttons {
+            left: auto;
+            right: 20px;
+        }
         .icon-btn {
             background: none; border: 1px solid var(--border-color-dark); color: var(--text-secondary-dark);
             width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
@@ -283,7 +287,7 @@
                 <div class="profile-info">
                     <h1 class="profile-name" data-translate-key="name">نواف عبدالله </h1>
                     <h2 class="profile-job-title" data-translate-key="jobTitle">
-                        <span id="typing-effect"></span><span class="cursor">&nbsp;</span>
+                        <span id="typing-effect">متخصص أمن سيبراني</span><span class="cursor">&nbsp;</span>
                     </h2>
                     <ul class="contact-list">
                       <li><a href="tel:+966546667777"> <span data-translate-key="phone">+966 54 666 7777</span> <i class="fas fa-phone-alt"></i></a></li>
@@ -465,20 +469,6 @@
                 printTitle: { ar: 'طباعة', en: 'Print' },
             };
             
-            function startTypingEffect(text) {
-                if (!typingEffectElement) return;
-                let i = 0;
-                typingEffectElement.innerHTML = "";
-                function type() {
-                    if (i < text.length) {
-                        typingEffectElement.innerHTML += text.charAt(i);
-                        i++;
-                        setTimeout(type, 80);
-                    }
-                }
-                type();
-            }
-
             function updateProgressBar() {
                 if (!progressBar) return;
                 const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -526,9 +516,11 @@
                 body.style.fontFamily = lang === 'ar' ? 'var(--font-ar)' : 'var(--font-en)';
                 document.querySelectorAll('[data-translate-key]').forEach(el => {
                     const key = el.dataset.translateKey;
-                    if (key === 'jobTitle') {
-                        if (translations[key] && translations[key][lang]) {
-                            startTypingEffect(translations[key][lang]);
+                     if (key === 'jobTitle') {
+                        // تحديث النص مباشرة بدون تأثير الكتابة
+                        const jobTitleSpan = document.getElementById('typing-effect');
+                        if (jobTitleSpan && translations[key] && translations[key][lang]) {
+                             jobTitleSpan.innerHTML = translations[key][lang];
                         }
                     } else if (translations[key] && translations[key][lang]) {
                         el.innerHTML = translations[key][lang];
@@ -536,6 +528,7 @@
                 });
                 localStorage.setItem('language', lang);
             }
+
 
             function handleThemeToggle() {
                 body.classList.toggle('light-mode');
